@@ -1,0 +1,117 @@
+<%@page import="admin.product_dto"%>
+<%@page import="java.util.List"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+List<product_dto> plist = (List<product_dto>) request.getAttribute("plist");
+int ct =(int) request.getAttribute("ct");
+%>
+<p>상품관리 페이지</p>
+    <div class="subpage_view">
+        <span>등록된 상품 <%=ct %>건</span>
+        <span>
+            <form id="sf" method="post" action="./write_done.do">
+            <select class="p_select1">
+                <option>상품명</option>
+                <option>상품코드</option>
+            </select>
+            <input type="text" name="search" class="p_input1" placeholder="검색어를 입력해 주세요">
+            <input type="submit" value="검색" title="상품검색" class="p_submit">
+            </form>
+        </span>
+    </div>
+    <div class="subpage_view2">
+        <ul>
+            <li><input type="checkbox" value></li>
+            <li>코드</li>
+            <li>이미지</li>
+            <li>상품명</li>
+            <li>카테고리 분류</li>
+            <li>판매가격</li>
+            <li>할인가격</li>
+            <li>할인율</li>
+            <li>재고현황</li>
+            <li>판매유/무</li>
+            <li>품절</li>
+            <li>관리</li>
+        </ul>
+        <%
+        if(plist.size() !=0){
+        int w = 0;
+        while(w < plist.size()){
+        %>
+        <ul>
+            <li><input type="checkbox"></li>
+            <li><%=plist.get(w).getPcode()%></li>
+            <li><%=plist.get(w).getPimg()%></li>
+            <li><%=plist.get(w).getPname()%></li>
+            <li><%=plist.get(w).getPB_cate()%></li>
+            <li><%=plist.get(w).getPprice()%></li>
+            <li><%=plist.get(w).getPsaleprice()%></li>
+            <li><%=plist.get(w).getPsale()%></li>
+            <li><%=plist.get(w).getPstock()%></li>
+            <li><%=plist.get(w).getPdone()%></li>
+            <li><%=plist.get(w).getPsold()%></li>
+            <li><%=plist.get(w).getPuse()%></li>
+        </ul>
+        <%
+        w++;
+        }
+       }else{
+       %>
+        <ul>
+            <li style="width: 100%;">등록된 상품이 없습니다.</li>
+        </ul>
+        <%}%>
+    </div>
+    <!-- Page Number -->
+    <div class="subpage_view3">
+        <ul class="pageing">
+            <li><img src="./ico/double_left.svg"></li>
+            <li><img src="./ico/left.svg"></li>
+           	<%
+           	int total = ct;
+			int pg =(int) Math.ceil(total /5f);
+			int ww = 1;
+			while(ww <= pg){
+			%>
+            <li><a href="./write_done.do?pidx=<%=ww%>"><%=ww %></a></li>				
+			<%
+			ww++;
+			}
+			%>
+            <li><img src="./ico/right.svg"></li>
+            <li><img src="./ico/double_right.svg"></li>
+        </ul>
+    </div>
+    <div class="subpage_view4">
+        <input type="button" value="선택상품 삭제" title="선택상품 삭제" onclick="p_del()" class="p_button">
+        <span style="float: right;">
+        <input type="button" value="신규상품 등록" title="신규상품 등록" onclick="p_register();" class="p_button p_button_color1">
+        </span>
+    </div>
+    
+    <script>
+    function p_register(){
+    	location.href="./admin_product_write.jsp"
+    }
+  //검색PART
+    document.querySelector("#sf").addEventListener("submit",function(a){
+    	a.preventDefault();
+    	if(sf.search.value==""){
+    		location.href="./write_done.do";
+    	}
+    	else{
+    		sf.submit();
+    	}
+    });
+  
+  function p_del(no){
+	  console.log(no);
+	  //if(confirm("정말로 삭제하시겠습니까? (복구 불가능합니다.)")){
+		//  location.href = "./p_deleteok.do?pidx="+no;
+	  //}
+  }
+    </script>   
+    
+    

@@ -1,0 +1,117 @@
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Date"%>
+<%@page import="team2.SearchDTO"%>
+<%@page import="team2.p_dto"%>
+<%@page import="java.util.List"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%
+Date pdday = new Date();
+SimpleDateFormat pdsf = new SimpleDateFormat("yyyyMMddHHmmss");
+
+
+List<p_dto> plists = (List<p_dto>)request.getAttribute("plists");
+int total = (int) request.getAttribute("ct");
+
+SearchDTO sdto =(SearchDTO) request.getAttribute("sdto");
+%>    
+<p>상품관리 페이지</p>
+    <div class="subpage_view">
+        <span>등록된 상품 <%=total%>건</span>
+        <form id="sf" method="post" action="./plists.do">
+	        <span>
+	            <select class="p_select1" name="searchType">
+	            <%
+				String pnameSelect = "";
+				String pcodeSelect = "";
+				
+				if (sdto != null) {
+				    if ("상품명".equals(sdto.getSearchType())) {
+				        pnameSelect = "selected";
+				    } 
+				    else if ("상품코드".equals(sdto.getSearchType())) {
+				        pcodeSelect = "selected";
+				    }
+				}
+				%>
+	                <option <%=pnameSelect %>>상품명</option>
+	                <option <%=pcodeSelect %>>상품코드</option>
+	            </select>
+	            <input type="text" name="searchVal" class="p_input1" placeholder="검색어를 입력해 주세요">
+	            <input type="submit" value="검색" title="상품검색" class="p_submit">
+	        </span>
+        </form>
+    </div>
+    <div class="subpage_view2">
+        <ul>
+            <li><input type="checkbox"></li>
+            <li>코드</li>
+            <li>이미지</li>
+            <li>상품명</li>
+            <li>카테고리 분류</li>
+            <li>판매가격</li>
+            <li>할인가격</li>
+            <li>할인율</li>
+            <li>재고현황</li>
+            <li>판매유/무</li>
+            <li>품절</li>
+            <li>관리</li>
+        </ul>
+        <%
+        if(plists.size() != 0){
+        int w =0;
+        while(w < plists.size()){
+        %>
+        <ul>
+            <li><input type="checkbox" id="cbox" value="<%=plists.get(w).getPidx()%>" onclick="p_check(this.checked,this.value)"></li>
+            <li><%=plists.get(w).getPcode()%></li>
+            <li style="overflow: hidden;"><img src="<%=plists.get(w).getPimg()%>" style="width: 30px; height:25px;"/></li>
+            <li><%=plists.get(w).getPname()%></li>
+            <li><%=plists.get(w).getPB_cate()%></li>
+            <li><%=plists.get(w).getPprice()%></li>
+            <li><%=plists.get(w).getPsaleprice()%></li>
+            <li><%=plists.get(w).getPsale()%>%</li>
+            <li><%=plists.get(w).getPstock()%></li>
+            <li><%=plists.get(w).getPdone()%></li>
+            <li><%=plists.get(w).getPsold()%></li>
+            <li><%=plists.get(w).getPuse()%></li>
+        </ul>
+        <%
+        w++;
+        }
+        }else{
+        %>
+        <ul>
+            <li style="width: 100%;">등록된 상품이 없습니다.</li>
+        </ul>
+        <%} %>
+    </div>
+    <div class="subpage_view3">
+        <ul class="pageing">
+            <li><img src="./ico/double_left.svg"></li>
+            <li><img src="./ico/left.svg"></li>
+            <%
+			int pg =(int) Math.ceil(total /5f);
+			int ww = 1;
+			while(ww <= pg){
+			%>
+            <li><a href="./plists.do?pidx=<%=ww%>"><%=ww %></a></li>				
+			<%
+			ww++;
+			}
+			%>
+            <li><img src="./ico/right.svg"></li>
+            <li><img src="./ico/double_right.svg"></li>
+        </ul>
+    </div>
+    <div class="subpage_view4">
+    	<input type="hidden" id="hid_pidx" value="">
+        <input type="button" value="선택상품 삭제" onclick="p_del();" title="선택상품 삭제" class="p_button">
+        <span style="float: right;">
+        <input type="button" value="신규상품 등록" title="신규상품 등록" onclick="p_register();" class="p_button p_button_color1">
+        </span>
+    </div>
+    
+<script src="./js/product.js?v=<%=pdsf.format(pdday)%>"></script>
+    
+    

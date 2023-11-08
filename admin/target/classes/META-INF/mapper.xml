@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="productDB">
+
+	<!-- 상품 등록 PART -->
+	<insert id="p_insert">
+		insert into product values ('0', #{pB_cate}, #{pS_cate}, #{pcode}, #{pname}, #{pdescription}, #{pprice}, #{psale}, #{psaleprice}, #{pstock}, #{pdone}, #{psold}, #{pimg}, #{pdetail}, 'Y' ,now())
+	</insert>
+	
+	
+	<!-- 상품 등록시 상품코드 중복 체크  -->
+	<select id="pcode_ck" parameterType="String" resultType="Datadto">
+		select * from product where pcode = #{pcode} order by pidx limit 0,1
+	</select>
+	
+	<!-- 상품 출력 페이지 PART -->
+	<select id="p_selectAllProducts" parameterType="int" resultType="Datadto">
+		select * from product order by pidx desc limit #{no},5;
+	</select>
+	
+	<!-- 상품 검색어 select -->
+	<select id="p_selectBySearch" parameterType="Map" resultType="Datadto">
+		select * from product
+		<choose>
+			<when test="part=='pname'">
+				<where>
+				pname like concat('%',#{searchVal},'%')				
+				</where>
+			</when>
+			<when test="part=='pcode'">
+				<where>
+				pcode like concat('%',#{searchVal},'%')				
+				</where>
+			</when>
+		</choose>
+		 order by pidx desc
+	</select>
+	
+	<!-- 상품 총 갯수 -->
+	<select id="p_countSelect" resultType="int">
+		select count(*) from product
+		<choose>
+			<when test="part=='pname'">
+				<where>
+				pname like concat('%',#{searchVal},'%')				
+				</where>
+			</when>
+			<when test="part=='pcode'">
+				<where>
+				pcode like concat('%',#{searchVal},'%')				
+				</where>
+			</when>
+		</choose>
+	</select>
+	
+	<!-- 상품 삭제 -->
+	<delete id="p_delete" parameterType="int">
+		delete from product where pidx = #{pidx}
+	</delete>
+	
+	
+	<!-- shop main 페이지 상품 출력 !!! -->
+	<select id="p_mainPlists" resultType="Datadto">
+		select * from product order by pidx desc
+	</select>
+	
+	
+	
+	
+	
+	<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+	<!-- 회원리스트 출력 -->
+	<select id="getAdminLists" resultType="memberdto">
+		select * from member order by midx desc
+	</select>
+	
+	<!-- muse 정지 체크 PART -->
+	<update id="updateMuseN" parameterType="String">
+		update member set muse = '정지' where midx=#{midx}
+	</update>
+	<update id="updateMuseY" parameterType="String">
+		update member set muse = '정상' where midx=#{midx}
+	</update>
+	
+	<!-- 아이디 중복체크 및 해당 아이디 여부 확인 쿼리 -->
+	<select id="getListById" parameterType="String" resultType="memberdto">
+		select * from member where mid = #{mid}
+	</select>
+	
+	<!-- 회원가입 완료시 정보 insert 저장 -->
+	<insert id="saveUserInfo">
+		insert into member values ('0',#{mid},#{mpass},#{mname},#{memail},#{mtel},#{mcmail},#{mcsms},now(),'정상')
+	</insert>
+	
+	
+	
+	
+	
+	
+	<insert id="config_insert">
+	insert into site_info (sidx, site_title, site_mail, site_point_use, site_point, member_level, 
+	site_corp, site_corp_no, site_ceo, site_tel, site_register,
+	site_register2, site_post, site_address, site_security,
+	site_security_mail, site_bank, site_bank_no, site_card,
+	site_hpp, site_book, site_min_point, site_max_point, site_cash,
+	site_tax_name, site_tax_cash, site_use_day, info_date )
+	values ('0',#{site_title}, #{site_mail}, #{site_point_use}, #{site_point}, 
+	#{member_level},#{site_corp}, #{site_corp_no}, #{site_ceo}, #{site_tel}, 
+	#{site_register},#{site_register2}, #{site_post}, #{site_address}, #{site_security},
+	#{site_security_mail}, #{site_bank}, #{site_bank_no}, #{site_card},
+	#{site_hpp}, #{site_book}, #{site_min_point}, #{site_max_point}, #{site_cash},
+	#{site_tax_name}, #{site_tax_cash}, #{site_use_day},now());
+	</insert>
+	
+	<select id="config_select" parameterType="string" resultType="team2.config_dto">
+	select * from site_info order by sidx desc limit 0,1
+	</select>
+	
+	<select id="site_info" parameterType="string" resultType="site_dto">
+	select * from site_info order by sidx desc limit 0,1
+	</select>
+</mapper>
